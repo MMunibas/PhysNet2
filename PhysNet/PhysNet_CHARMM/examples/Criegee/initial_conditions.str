@@ -1,0 +1,99 @@
+
+set seed 1
+
+READ COOR CARD NAME cor/@seed.cor
+READ COOR CARD NAME vel/@seed.vel COMP
+
+SET MO 12.0107
+SET MH  1.00800
+CALC MT = @MO + @MH
+CALC MU = @MO * @MH / @MT   ! Reduced mass
+
+! Delta E = E1-E0 = 5983.5 cm^-1
+SET DLTE 20.10769  ! E1-E0 in kcal/mol
+COOR STAT SELE TYPE C END
+SET XO ?XAVE
+SET YO ?YAVE
+SET ZO ?ZAVE
+COOR STAT SELE TYPE H END
+SET XH ?XAVE
+SET YH ?YAVE
+SET ZH ?ZAVE
+COOR STAT SELE TYPE C END COMP
+SET VXO ?XAVE
+SET VYO ?YAVE
+SET VZO ?ZAVE
+COOR STAT SELE TYPE H END COMP
+SET VXH ?XAVE
+SET VYH ?YAVE
+SET VZH ?ZAVE
+
+CALC E0O = ((@VXO) * (@VXO)) + ((@VYO) * (@VYO))
+CALC E0O = ((@VZO) * (@VZO)) + @E0O
+CALC E0H = ((@VXH) * (@VXH)) + ((@VYH) * (@VYH))
+CALC E0H = ((@VZH) * (@VZH)) + @E0H
+CALC KEO =  (@MO * (@E0O))/2
+CALC KEH =  (@MH * (@E0H))/2
+CALC TKE = @KEO + @KEH
+
+! Center of mass velocity
+CALC VXCM = ( @MO * (@VXO) + @MH * (@VXH) ) / @MT
+CALC VYCM = ( @MO * (@VYO) + @MH * (@VYH) ) / @MT
+CALC VZCM = ( @MO * (@VZO) + @MH * (@VZH) ) / @MT
+
+! Velocities of O-H in the CM frame
+CALC VXO = @VXO - (@VXCM)
+CALC VYO = @VYO - (@VYCM)
+CALC VZO = @VZO - (@VZCM)
+CALC VXH = @VXH - (@VXCM)
+CALC VYH = @VYH - (@VYCM)
+CALC VZH = @VZH - (@VZCM)
+
+! Unit vector of O->H
+CALC DX = @XO - (@XH)
+CALC DY = @YO - (@YH)
+CALC DZ = @ZO - (@ZH)
+CALC DT = (@DX)*(@DX) + (@DY)*(@DY)
+CALC DI = SQRT ( @DT + (@DZ)*(@DZ) )
+CALC DX = @DX / @DI
+CALC DY = @DY / @DI
+CALC DZ = @DZ / @DI
+
+! Velocity components in the direction of C->N
+CALC V1 = (@VXO)*(@DX) + (@VYO)*(@DY)
+CALC VO = @V1 + (@VZO)*(@DZ)
+CALC V2 = (@VXH)*(@DX) + (@VYH)*(@DY)
+CALC VH = @V2 + (@VZH)*(@DZ)
+CALC TMP = @MU * ((@VO)-(@VH))
+CALC RT = SQRT ( (@TMP)*(@TMP) + 2*@MU*@DLTE )
+
+! Extra velocity components due to excitation
+IF @VO .GT. @VH THEN
+   CALC VO = - ((@TMP) - (@RT)) / @MO
+   CALC VH =   ((@TMP) - (@RT)) / @MH
+ELSE
+   CALC VO = - ((@TMP) + (@RT)) / @MO
+   CALC VH =   ((@TMP) + (@RT)) / @MH
+ENDIF
+
+! New velocities
+CALC VXO = @VXO + (@VO)*(@DX) + (@VXCM)
+CALC VYO = @VYO + (@VO)*(@DY) + (@VYCM)
+CALC VZO = @VZO + (@VO)*(@DZ) + (@VZCM)
+CALC VXH = @VXH + (@VH)*(@DX) + (@VXCM)
+CALC VYH = @VYH + (@VH)*(@DY) + (@VYCM)
+CALC VZH = @VZH + (@VH)*(@DZ) + (@VZCM)
+
+
+CALC E0O = ((@VXO) * (@VXO)) + ((@VYO) * (@VYO))
+CALC E0O = ((@VZO) * (@VZO)) + @E0O
+CALC E0H = ((@VXH) * (@VXH)) + ((@VYH) * (@VYH))
+CALC E0H = ((@VZH) * (@VZH)) + @E0H
+CALC KEO =  (@MO * (@E0O))/2
+CALC KEH =  (@MH * (@E0H))/2
+CALC TKE2 = @KEO + @KEH
+
+CALC BT = @TKE2 - @TKE
+
+COOR SET XDIR @VXH YDIR @VYH ZDIR @VZH SELE TYPE H END COMP
+COOR SET XDIR @VXO YDIR @VYO ZDIR @VZO SELE TYPE C END COMP

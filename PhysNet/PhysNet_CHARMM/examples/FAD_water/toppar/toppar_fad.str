@@ -1,0 +1,158 @@
+* Toplogy and parameter information for formic acid monomers and dimers
+*
+
+set nat ?NATC
+set app
+!We're exploiting what is arguably a bug in the parser. On the left hand side,
+!the quotes have priority, so NAT is correctly substituted. On the right hand
+!side, the ? has priority and NATC" (sic) is not a valid substitution...
+if "@NAT" ne "?NATC" if @nat ne 0 set app append
+
+read rtf card @app
+* Topology for water and ions
+*
+31  1
+
+MASS     16 HOFA    1.008
+MASS     17 HFA     1.008
+MASS     18 CFA    12.01100
+MASS     19 O2FA   15.99900
+MASS     20 O1FA   15.99900
+
+DEFA FIRS NONE LAST NONE
+
+RESI FAM   0.00
+GROUP
+ATOM C1  CFA    0.415
+ATOM H2  HFA    0.085
+ATOM O3  O1FA  -0.400
+ATOM O4  O1FA  -0.400
+ATOM H5  HOFA   0.300
+BOND C1 O3
+BOND C1 O4
+BOND C1 H2
+BOND O4 H5
+IC O3   C    O4   H5   0.0000  0.0000   0.0000  0.0000  0.0000
+IC O4   O3   *C   H2   0.0000  0.0000 180.0000  0.0000  0.0000
+PATCH FIRST NONE LAST NONE
+
+RESI FAD   0.00
+GROUP
+ATOM C1  CFA     0.00 ! 0.41
+ATOM H2  HFA     0.00 ! 0.08
+ATOM O3  O2FA    0.00 !-0.40
+ATOM O4  O1FA    0.00 !-0.40
+ATOM H5  HOFA    0.00 ! 0.31
+ATOM C6  CFA     0.00 ! 0.41
+ATOM H7  HFA     0.00 ! 0.08
+ATOM O8  O2FA    0.00 !-0.40
+ATOM O9  O1FA    0.00 !-0.40
+ATOM H10 HOFA    0.00 ! 0.31
+BOND C1 O3
+BOND C1 O4
+BOND C1 H2
+BOND O4 H5
+BOND C6 O8
+BOND C6 O9
+BOND C6 H7
+BOND O9 H10
+IC O3   C1   O4   H5   0.0000  0.0000   0.0000  0.0000  0.0000
+IC O4   O3   *C   H2   0.0000  0.0000 180.0000  0.0000  0.0000
+IC O8   C6   O9   H10  0.0000  0.0000   0.0000  0.0000  0.0000
+IC O9   O8   *C   H7   0.0000  0.0000 180.0000  0.0000  0.0000
+PATCH FIRST NONE LAST NONE
+
+END
+
+read para card flex @app
+* Parameters for formic acid
+*
+
+ATOMS
+MASS     16 HOFA    1.008
+MASS     17 HFA     1.008
+MASS     18 CFA    12.01100
+MASS     19 O2FA   15.99900
+MASS     20 O1FA   15.99900
+
+BONDS
+!
+!V(bond) = Kb(b - b0)**2
+!
+!Kb: kcal/mole/A**2
+!b0: A
+!
+!atom type Kb          b0
+!
+O1FA  CFA  0.000       1.3100 ! FAD PhysNet
+O2FA  CFA  0.000       1.2200 ! FAD PhysNet
+O1FA  HOFA 0.000       1.0000 ! FAD PhysNet
+HFA  CFA   0.000       1.0900 ! FAD PhysNet
+
+ANGLES
+!
+!V(angle) = Ktheta(Theta - Theta0)**2
+!
+!V(Urey-Bradley) = Kub(S - S0)**2
+!
+!Ktheta: kcal/mole/rad**2
+!Theta0: degrees
+!Kub: kcal/mole/A**2 (Urey-Bradley)
+!S0: A
+!
+!atom types     Ktheta    Theta0   Kub     S0
+!
+O2FA  CFA  O1FA 00.00    123.00   000.00   2.26200 ! 50.00    123.00   210.00   2.26200
+O1FA  CFA  O1FA 00.00    123.00   000.00   2.26200 ! 50.00    123.00   210.00   2.26200
+O2FA  CFA  HFA  00.00    119.00 ! 
+O1FA  CFA  HFA  00.00    105.00 ! 
+CFA  O1FA  HOFA 00.00    115.00 ! 
+
+DIHEDRALS
+!
+!V(dihedral) = Kchi(1 + cos(n(chi) - delta))
+!
+!Kchi: kcal/mole
+!n: multiplicity
+!delta: degrees
+!
+!atom types             Kchi    n   delta
+O2FA  CFA  O1FA  HOFA   0.0000  2   180.00 ! 2.0500  2   180.00
+HFA  CFA  O1FA  HOFA    0.0000  2   180.00 ! 3.4500  2   180.00
+O1FA  CFA  O1FA  HOFA   0.0000  2   180.00 ! 2.0500  2   180.00
+
+!
+IMPROPER
+!
+!V(improper) = Kpsi(psi - psi0)**2
+!
+!Kpsi: kcal/mole/rad**2
+!psi0: degrees
+!note that the second column of numbers (0) is ignored
+!
+!atom types           Kpsi                   psi0
+!
+CFA  O2FA  O1FA  HFA  00.0000  0     0.00 ! 75.0000  0     0.00
+CFA  O1FA  O1FA  HFA  00.0000  0     0.00 ! 75.0000  0     0.00
+
+
+NONBONDED nbxmod  5 atom cdiel fshift vatom vdistance vfswitch -
+cutnb 14.0 ctofnb 12.0 ctonnb 10.0 eps 1.0 e14fac 1.0 wmin 1.5
+
+CFA    0.0       -0.0980     1.7000 ! methyl acetate update viv 12/29/06
+HFA    0.0       -0.0460     0.9000 ! adm jr., 6/27/90, his
+O2FA   0.0       -0.1200     1.7000 ! PROT
+O1FA   0.0       -0.1921     1.7650 ! og MeOH and EtOH 1/06 (was -0.1521 1.7682)
+HOFA   0.0       -0.0460     0.2245 ! polar H
+!CFA    0.0       -0.0000     0.0000 ! methyl acetate update viv 12/29/06
+!HFA    0.0       -0.0000     0.0000 ! adm jr., 6/27/90, his
+!O2FA   0.0       -0.0000     0.0000 ! PROT
+!O1FA   0.0       -0.0000     0.0000 ! og MeOH and EtOH 1/06 (was -0.1521 1.7682)
+!HOFA   0.0       -0.0000     0.0000 ! polar H
+
+END
+
+!BOMLEV @bom @PARA
+!WRNLEV @wrn @PARA
+
+return
