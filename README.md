@@ -7,6 +7,8 @@ PhysNet program package for training of the PhysNet model and application in ASE
 
 to be done
 
+please find a training script at https://github.com/MMunibas/fad.git
+
 ## PhysNet for ASE
 
 to be done
