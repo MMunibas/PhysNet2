@@ -1,7 +1,7 @@
 
 # PhysNet Model version 2
 
-PhysNet program package for training of the PhysNet model and application in ASE and PyCHARMM
+PhysNet program package for training of the PhysNet model and application in ASE and PyCHARMM.
 
 ## PhysNet Trainer
 
