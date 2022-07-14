@@ -1,8 +1,0 @@
-
-PhysNet_CHARMM is a modified PhysNet program package 
-(https://github.com/MMunibas/fad.git) for the use in CHARMM via PyCHARMM.
-
-The requirements are the current version of CHARMM with working PyCHARMM 
-module, its dependencies and Tensorflow version 2.8 or newer.
-
-The 
