@@ -22,4 +22,5 @@ module, its dependencies and Tensorflow version 2.8 or newer.
 
 Download the git repository to your system and add the PhysNet directory to your PYTHONPATH environmental variable
 
-export PYTHONPATH={/your/path/to/here}/PhysNet:$PYTHONPATH
+### Starting from scratch
+      export PYTHONPATH={/your/path/to/here}/PhysNet:$PYTHONPATH
