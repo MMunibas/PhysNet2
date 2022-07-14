@@ -22,6 +22,6 @@ Test examples molecular dynamic simualation of a formic acid dimer in water, par
 
 ## Installation
 
-Download the git repository to your system and add the PhysNet directory to your PYTHONPATH environmental variable:
+Download the git repository to your system and add the PhysNet directory to your PYTHONPATH environment variable:
 
       export PYTHONPATH={/your/path/to/here}/PhysNet:$PYTHONPATH
